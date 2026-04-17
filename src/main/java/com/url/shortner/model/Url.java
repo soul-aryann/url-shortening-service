@@ -17,5 +17,4 @@ public class Url {
     private String shortUrl;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
 }
