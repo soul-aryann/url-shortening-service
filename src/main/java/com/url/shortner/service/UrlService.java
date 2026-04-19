@@ -1,7 +1,10 @@
 package com.url.shortner.service;
 
 import java.time.LocalDateTime;
+import java.util.NoSuchElementException;
 import java.util.Random;
+
+import javax.management.RuntimeErrorException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,21 +21,32 @@ public class UrlService {
     @Autowired
     private UrlRepository urlRepository;
 
+    public Url getUrlByShortUrl(String shortUrl) throws RuntimeErrorException {
+        try {
+            return urlRepository.findByShortUrl(shortUrl).getFirst();
+        } catch (NoSuchElementException e) {
+            throw new RuntimeErrorException(new Error(), "This Short Url already exists");
+        }
+    }
+
     @Transactional
-    public Url createShortUrl(String url) {
+    public Url createShortUrl(String url) throws RuntimeErrorException {
         String shortUrl = generateShortUrl(url);
         
         // checking fir uniqueness of the generated short url
         if (!urlRepository.findByShortUrl(shortUrl).isEmpty()) {
-            // throw new RuntimeErrorException(new Error(), "This Short Url already exists");
+            throw new RuntimeErrorException(new Error(), "This Short Url already exists");
         }
 
         Url saved_url = new Url();
         saved_url.setUrl(url);
         saved_url.setShortUrl(shortUrl);
-        saved_url.setCreatedAt(LocalDateTime.now());
 
-        return urlRepository.save(new Url());
+        LocalDateTime now =LocalDateTime.now();
+        saved_url.setCreatedAt(now);
+        saved_url.setUpdatedAt(now);
+
+        return urlRepository.save(saved_url);
     }
 
 

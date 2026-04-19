@@ -11,8 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.url.shortner.model.Url;
 import com.url.shortner.service.UrlService;
 
-import tools.jackson.databind.ObjectMapper;
-import tools.jackson.databind.node.ObjectNode;
 
 @RestController
 @RequestMapping("/api")
@@ -22,21 +20,14 @@ public class UrlController {
     @Autowired
     private UrlService urlService;
 
-    @Autowired
-    ObjectMapper mapper;
-
-
-    @GetMapping("/{url}")
-    public ObjectNode getShortUrl(@PathVariable String url) {
-        String shortUrl = urlService.createShortUrl(url);
-
-        ObjectNode objectNode = mapper.createObjectNode();
-        objectNode.put("shortUrl", )
+    @GetMapping("/{shortUrl}")
+    public Url getShortUrl(@PathVariable String shortUrl) {
+        return urlService.getUrlByShortUrl(shortUrl);
     }
-
+    
     @PostMapping("/")
-    public Url shortenUrl(@RequestBody Url url) {
-        return url;
+    public Url shortenUrl(@RequestBody String url) {
+        Url saveUrl = urlService.createShortUrl(url);
+        return saveUrl;
     }
-
 }
